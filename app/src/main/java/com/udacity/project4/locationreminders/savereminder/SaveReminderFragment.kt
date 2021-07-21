@@ -112,9 +112,10 @@ class SaveReminderFragment : BaseFragment() {
 
             .setExpirationDuration(GeofenceConstants.GEOFENCE_EXPIRATION_IN_MILLISECONDS)
 
-            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER
-                    or Geofence.GEOFENCE_TRANSITION_DWELL
-                    or Geofence.GEOFENCE_TRANSITION_EXIT)
+//            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER
+//                    or Geofence.GEOFENCE_TRANSITION_DWELL
+//                    or Geofence.GEOFENCE_TRANSITION_EXIT)
+            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
 
             .build()
 
