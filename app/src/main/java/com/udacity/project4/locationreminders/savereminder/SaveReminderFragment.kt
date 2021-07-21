@@ -29,10 +29,8 @@ class SaveReminderFragment : BaseFragment() {
     override val _viewModel: SaveReminderViewModel by inject()
     private lateinit var binding: FragmentSaveReminderBinding
 
-    private lateinit var db: RemindersDatabase
-
     lateinit var geofencingClient: GeofencingClient
-    private val geofenceList = ArrayList<Geofence>()
+//    private val geofenceList = ArrayList<Geofence>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,11 +57,6 @@ class SaveReminderFragment : BaseFragment() {
                 NavigationCommand.To(SaveReminderFragmentDirections.actionSaveReminderFragmentToSelectLocationFragment())
         }
 
-        db = Room.databaseBuilder(
-            context!!,
-            RemindersDatabase::class.java, "reminders-database"
-        ).build()
-
         binding.saveReminder.setOnClickListener {
             val title = _viewModel.reminderTitle.value
             val description = _viewModel.reminderDescription.value
@@ -75,15 +68,6 @@ class SaveReminderFragment : BaseFragment() {
 //             1) add a geofencing request
 //             2) save the reminder to the local db
 
-            val reminderDto = ReminderDTO(
-                title,
-                description,
-                location,
-                latitude,
-                longitude,
-                "1"
-            )
-
             val reminderDataItem = ReminderDataItem(
                 title,
                 description,
@@ -93,7 +77,7 @@ class SaveReminderFragment : BaseFragment() {
                 "1"
             )
 
-            saveReminderToDb(reminderDto, reminderDataItem)
+            saveReminderToDb(reminderDataItem)
 
             addGeofence(reminderDataItem)
 
@@ -102,7 +86,7 @@ class SaveReminderFragment : BaseFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        //make sure to clear the view model after destroy, as it's a single view model.
+        // make sure to clear the view model after destroy, as it's a single view model.
         _viewModel.onClear()
     }
 
@@ -128,15 +112,12 @@ class SaveReminderFragment : BaseFragment() {
         // build the geofence request
         GeofencingRequest.Builder().apply {
             setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
-            addGeofences(geofenceList)
+            addGeofence(geofence)
         }.build()
     }
 
-
-    private fun saveReminderToDb(reminderDto: ReminderDTO, reminderDataItem: ReminderDataItem) {
-        val remindersDao = db.reminderDao()
+    private fun saveReminderToDb(reminderDataItem: ReminderDataItem) {
         viewLifecycleOwner.lifecycleScope.launch {
-            remindersDao.saveReminder(reminderDto)
             _viewModel.validateAndSaveReminder(reminderDataItem)
         }
     }
