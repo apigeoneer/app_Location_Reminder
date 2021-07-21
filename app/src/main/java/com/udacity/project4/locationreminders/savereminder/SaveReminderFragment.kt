@@ -1,13 +1,11 @@
 package com.udacity.project4.locationreminders.savereminder
 
 import android.os.Bundle
-import android.provider.CalendarContract
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
-import androidx.room.Room
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.GeofencingRequest
@@ -16,8 +14,6 @@ import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSaveReminderBinding
-import com.udacity.project4.locationreminders.data.dto.ReminderDTO
-import com.udacity.project4.locationreminders.data.local.RemindersDatabase
 import com.udacity.project4.locationreminders.geofence.GeofenceConstants
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
@@ -36,8 +32,7 @@ class SaveReminderFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_save_reminder, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_save_reminder, container,false)
 
         setDisplayHomeAsUpEnabled(true)
 
@@ -68,7 +63,7 @@ class SaveReminderFragment : BaseFragment() {
 //             1) add a geofencing request
 //             2) save the reminder to the local db
 
-            val reminderDataItem = ReminderDataItem(
+            val reminderData = ReminderDataItem(
                 title,
                 description,
                 location,
@@ -77,9 +72,13 @@ class SaveReminderFragment : BaseFragment() {
                 "1"
             )
 
-            saveReminderToDb(reminderDataItem)
+            // add a geofence request
+            if (_viewModel.validateEnteredData(reminderData)) {
+                addGeofence(reminderData)
+            }
 
-            addGeofence(reminderDataItem)
+            // validate & save reminder (title + desc + geofence) to db
+            saveReminderToDb(reminderData)
 
         }
     }
