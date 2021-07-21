@@ -8,12 +8,17 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
+import com.google.android.gms.location.Geofence
+import com.google.android.gms.location.GeofencingClient
+import com.google.android.gms.location.GeofencingRequest
+import com.google.android.gms.location.LocationServices
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSaveReminderBinding
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.local.RemindersDatabase
+import com.udacity.project4.locationreminders.geofence.GeofenceConstants
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import kotlinx.coroutines.launch
@@ -26,6 +31,9 @@ class SaveReminderFragment : BaseFragment() {
 
     private lateinit var db: RemindersDatabase
 
+    lateinit var geofencingClient: GeofencingClient
+    private val geofenceList = ArrayList<Geofence>()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,6 +44,8 @@ class SaveReminderFragment : BaseFragment() {
         setDisplayHomeAsUpEnabled(true)
 
         binding.viewModel = _viewModel
+
+        geofencingClient = LocationServices.getGeofencingClient(context!!)
 
         return binding.root
     }
@@ -65,7 +75,6 @@ class SaveReminderFragment : BaseFragment() {
 //             1) add a geofencing request
 //             2) save the reminder to the local db
 
-            // Saving the reminder to the local db
             val reminderDto = ReminderDTO(
                 title,
                 description,
@@ -86,6 +95,8 @@ class SaveReminderFragment : BaseFragment() {
 
             saveReminderToDb(reminderDto, reminderDataItem)
 
+            addGeofence(reminderDataItem)
+
         }
     }
 
@@ -94,6 +105,33 @@ class SaveReminderFragment : BaseFragment() {
         //make sure to clear the view model after destroy, as it's a single view model.
         _viewModel.onClear()
     }
+
+    private fun addGeofence(reminderData: ReminderDataItem) {
+        // build the geofence obj
+        val geofence = Geofence.Builder()
+            .setRequestId(reminderData.id)
+
+            .setCircularRegion(
+                reminderData.latitude!!,
+                reminderData.longitude!!,
+                GeofenceConstants.GEOFENCE_RADIUS_IN_METERS
+            )
+
+            .setExpirationDuration(GeofenceConstants.GEOFENCE_EXPIRATION_IN_MILLISECONDS)
+
+            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER
+                    or Geofence.GEOFENCE_TRANSITION_DWELL
+                    or Geofence.GEOFENCE_TRANSITION_EXIT)
+
+            .build()
+
+        // build the geofence request
+        GeofencingRequest.Builder().apply {
+            setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+            addGeofences(geofenceList)
+        }.build()
+    }
+
 
     private fun saveReminderToDb(reminderDto: ReminderDTO, reminderDataItem: ReminderDataItem) {
         val remindersDao = db.reminderDao()
