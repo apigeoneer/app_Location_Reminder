@@ -68,10 +68,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
 //        TODO: add style to the map
 
-
-//        TODO: call this function after the user confirms on the selected location
-//        onLocationSelected()
-
         return binding.root
     }
 
