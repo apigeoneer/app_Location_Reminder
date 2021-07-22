@@ -3,6 +3,7 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -22,6 +23,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
+import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
 import com.udacity.project4.locationreminders.geofence.GeofenceConstants
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
@@ -63,11 +65,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
 
-//        TODO: zoom to the user location after taking her permission
-
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
 //        TODO: add style to the map
-//        TODO: put a marker to location that the user selected
 
 
 //        TODO: call this function after the user confirms on the selected location
@@ -145,8 +144,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             map.uiSettings.isMyLocationButtonEnabled = false
         }
 
+        // Put a marker to location that the user selected
         map.setOnMapClickListener { latLng ->
-            // Get the current location of the device and set the position of the map.
             selectedMarker?.remove()
             selectedMarker?.position = latLng
             map.addMarker(MarkerOptions().position(latLng)).also {
@@ -155,12 +154,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             map.animateCamera(CameraUpdateFactory.newLatLng(latLng))
             onLocationSelected(latLng)
         }
-
-//        googleMap?.addMarker(
-//            MarkerOptions()
-//                .position(defaultLocation)
-//                .title("Marker in Sydney")
-//        )
     }
 
     /**
@@ -203,6 +196,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                         if (lastKnownLocation != null) {
                             Log.d(TAG, "Last known location lat: $lastKnownLocation.latitude, lng: $lastKnownLocation.longitude")
 
+                            // Zoom to the user location if it is fetched
                             map.moveCamera(
                                 CameraUpdateFactory.newLatLngZoom(
                                     LatLng(
@@ -231,11 +225,20 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         }
     }
 
-
+    /**
+     * When the user confirms on the selected location,
+     * send back the selected location details to the view model.
+     * and navigate back to the previous fragment to save the reminder and add the geofence
+     */
     private fun onLocationSelected(latLng: LatLng) {
-        //        TODO: When the user confirms on the selected location,
-        //         send back the selected location details to the view model
-        //         and navigate back to the previous fragment to save the reminder and add the geofence
+        _viewModel.latitude.postValue(latLng.latitude)
+        _viewModel.longitude.postValue(latLng.longitude)
+
+        val fromLocation = Geocoder(activity).getFromLocation(latLng.latitude, latLng.longitude, 2)
+        _viewModel.reminderSelectedLocationStr.postValue(fromLocation[0].locality)
+
+        // navigate back to the save reminder screen
+        _viewModel.navigationCommand.postValue(NavigationCommand.Back)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
