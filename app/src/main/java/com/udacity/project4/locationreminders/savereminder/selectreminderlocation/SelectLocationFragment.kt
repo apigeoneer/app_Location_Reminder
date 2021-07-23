@@ -46,7 +46,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     private var locationPermissionGranted = false
     private var lastKnownLocation: Location?= null
-    private val defaultLocation = LatLng(-33.852, 151.211)
+    private val defaultLocation = LatLng(-33.852, 151.211)                       // Sydney
     private var selectedMarker: Marker? = null
 
 
