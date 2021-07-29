@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.getOrAwaitValue
+import com.udacity.project4.locationreminders.util.MainCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.hamcrest.core.IsNot.not
 import org.hamcrest.MatcherAssert.assertThat
@@ -26,9 +27,9 @@ class RemindersListViewModelTest {
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
-//    // To test Coroutines running on Dispatchers.Main
-//    @get:Rule
-//    var mainCoroutineRule = MainCoroutineRule()
+    // To test Coroutines running on Dispatchers.Main
+    @get:Rule
+    var mainCoroutineRule = MainCoroutineRule()
 
     private val reminder1 = ReminderDTO("title1", "description1", "location1",
         16.78132279413486, 73.35721723965958)
@@ -50,44 +51,45 @@ class RemindersListViewModelTest {
     }
 
     @Test
-    fun loadReminders_getRemindersList() {
-        // Given
+    fun loadReminders_getsRemindersListForPopulatedRemindersList() {
+        // Given a fresh view model & a data source containing a populated reminders list
         val remindersList = mutableListOf(reminder1, reminder2)
         dataSource = FakeDataSource(remindersList)
         remindersListViewModel = RemindersListViewModel(ApplicationProvider
             .getApplicationContext(), dataSource)
 
-        // When
+        // When loading reminders
         remindersListViewModel.loadReminders()
 
-        // Then
+        // Then the reminders list is not empty
         assertThat(remindersListViewModel.remindersList.getOrAwaitValue(), (not(emptyList())))
     }
 
     @Test
-    fun loadReminders_checkShowLoading() {
-        // Given
+    fun loadReminders_showsLoadingForEmptyRemindersList() {
+        // Given a fresh view model & a data source containing an empty reminders list
         dataSource = FakeDataSource(mutableListOf())
-        remindersListViewModel = RemindersListViewModel(ApplicationProvider.getApplicationContext(), dataSource)
-        //mainCoroutineRule.pauseDispatcher()
+        remindersListViewModel = RemindersListViewModel(ApplicationProvider
+            .getApplicationContext(), dataSource)
+        mainCoroutineRule.pauseDispatcher()
 
-        // When
+        // When loading reminders
         remindersListViewModel.loadReminders()
 
-        // Then
+        // Then showLoading is true as there are no reminders
         assertThat(remindersListViewModel.showLoading.getOrAwaitValue(), `is`(true))
     }
 
     @Test
-    fun returnError() {
-        // Given
+    fun loadReminders_returnsErrorForNullRemindersList() {
+        // Given a fresh view model & a data source containing null
         dataSource = FakeDataSource(null)
         remindersListViewModel = RemindersListViewModel(ApplicationProvider.getApplicationContext(), dataSource)
 
-        // When
+        // When loading reminders
         remindersListViewModel.loadReminders()
 
-        // Then
+        // Then a snack bar with the message "No reminders found" is shown
         assertThat(remindersListViewModel.showSnackBar.getOrAwaitValue(), `is`("No reminders found"))
     }
 
