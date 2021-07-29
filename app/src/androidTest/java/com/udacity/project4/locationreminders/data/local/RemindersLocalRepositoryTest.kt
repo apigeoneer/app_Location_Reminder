@@ -1,24 +1,13 @@
 package com.udacity.project4.locationreminders.data.local
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
-import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
-import com.udacity.project4.locationreminders.data.dto.Result
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.instanceOf
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.After
 import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
 import org.junit.runner.RunWith
+import com.udacity.project4.locationreminders.data.FakeDataSource
+
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
@@ -38,11 +27,33 @@ class RemindersLocalRepositoryTest {
     private val newReminder = ReminderDTO("title4", "description4", "location4",
         26.78132279413486, 83.35721723965958)
 
-    val list = listOf<ReminderDTO>(reminder1, reminder2, reminder3)
+    val remindersList = listOf(reminder1, reminder2, reminder3)
 
 
-
-    //private lateinit var remindersDataSource: FakeDataSource
+    private lateinit var dataSource: FakeDataSource
     private lateinit var remindersLocalRepository: RemindersLocalRepository
+
+
+    @Before
+    fun setup() {
+
+    }
+
+    fun saveReminder() {
+
+    }
+
+    fun getReminders() {
+
+    }
+
+    fun getReminder() {
+
+    }
+
+    fun deleteAllReminders() {
+
+    }
+
 
 }
