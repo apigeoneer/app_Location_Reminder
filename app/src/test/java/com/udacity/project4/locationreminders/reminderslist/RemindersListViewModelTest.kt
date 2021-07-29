@@ -5,6 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
+import com.udacity.project4.locationreminders.getOrAwaitValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.hamcrest.core.IsNot.not
 import org.hamcrest.MatcherAssert.assertThat
@@ -60,7 +61,7 @@ class RemindersListViewModelTest {
         remindersListViewModel.loadReminders()
 
         // Then
-        //assertThat(remindersListViewModel.remindersList.getOrAwaitValue(), (not(emptyList())))
+        assertThat(remindersListViewModel.remindersList.getOrAwaitValue(), (not(emptyList())))
     }
 
     @Test
@@ -74,7 +75,7 @@ class RemindersListViewModelTest {
         remindersListViewModel.loadReminders()
 
         // Then
-        //assertThat(remindersListViewModel.showLoading.getOrAwaitValue(), `is`(true))
+        assertThat(remindersListViewModel.showLoading.getOrAwaitValue(), `is`(true))
     }
 
     @Test
@@ -87,7 +88,7 @@ class RemindersListViewModelTest {
         remindersListViewModel.loadReminders()
 
         // Then
-        //assertThat(remindersListViewModel.showSnackBar.getOrAwaitValue(), `is`("No reminders found"))
+        assertThat(remindersListViewModel.showSnackBar.getOrAwaitValue(), `is`("No reminders found"))
     }
 
 
