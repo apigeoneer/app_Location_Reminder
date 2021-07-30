@@ -8,7 +8,7 @@ class FakeRemindersDao: RemindersDao {
 
     var shouldReturnError = false
 
-    private val remindersServiceData: LinkedHashMap<String, ReminderDTO> = LinkedHashMap()
+    val remindersServiceData: LinkedHashMap<String, ReminderDTO> = LinkedHashMap()
 
     override suspend fun getReminders(): List<ReminderDTO> {
         if (shouldReturnError) {
