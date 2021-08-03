@@ -37,14 +37,6 @@ class RemindersListViewModelTest {
     private val reminder2 = ReminderDTO("title2", "description2", "location2",
         36.78132279413486, 73.35721723965958)
 
-    private val reminder3 = ReminderDTO("title3", "description3", "location3",
-        26.78132279413486, 63.35721723965958)
-
-    private val newReminder = ReminderDTO("title4", "description4", "location4",
-        26.78132279413486, 83.35721723965958)
-
-    val list = listOf<ReminderDTO>(reminder1, reminder2, reminder3)
-
     @After
     fun tearDown() {
         stopKoin()
@@ -90,7 +82,7 @@ class RemindersListViewModelTest {
         remindersListViewModel.loadReminders()
 
         // Then a snack bar with the message "No reminders found" is shown
-        assertThat(remindersListViewModel.showSnackBar.getOrAwaitValue(), `is`("No reminders found"))
+        assertThat(remindersListViewModel.showSnackBar.getOrAwaitValue(), `is`("Reminders not found"))
     }
 
 
