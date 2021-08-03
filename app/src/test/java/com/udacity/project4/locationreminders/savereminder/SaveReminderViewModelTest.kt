@@ -12,6 +12,7 @@ import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.locationreminders.util.MainCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -33,7 +34,7 @@ class SaveReminderViewModelTest {
 
     @Before
     fun setUp() {
-        stopKoin()
+//        stopKoin()
         val reminderDataItem = mutableListOf<ReminderDTO>()
         dataSource = FakeDataSource(reminderDataItem)
         saveReminderViewModel =
@@ -41,10 +42,15 @@ class SaveReminderViewModelTest {
 
     }
 
+    @After
+    fun teardown() {
+        stopKoin()
+    }
+
     @Test
     fun saveReminder_returnsErrorForReminderWithoutTitle() = mainCoroutineRule.runBlockingTest {
         // Given
-        val reminder = ReminderDataItem("", "description", "",
+        val reminder = ReminderDataItem("", "description", "location",
             16.78132279413486, 73.35721723965958)
 
         // When
@@ -68,11 +74,13 @@ class SaveReminderViewModelTest {
         // Then
         assertThat(saveReminderViewModel.validateEnteredData(reminder)).isFalse()
 
-        assertThat(saveReminderViewModel.showSnackBarInt.getOrAwaitValue()).isEqualTo(R.string.err_enter_title)
+        assertThat(saveReminderViewModel.showSnackBarInt.getOrAwaitValue()).isEqualTo(R.string.err_select_location)
     }
 
     @Test
     fun saveReminder_showsLoadingStatus() {
+        mainCoroutineRule.pauseDispatcher()
+
         // Given
         val reminder = ReminderDataItem("title", "description", "location",
             16.78132279413486, 73.35721723965958)
@@ -81,7 +89,7 @@ class SaveReminderViewModelTest {
         saveReminderViewModel.saveReminder(reminder)
 
         // Then
-        mainCoroutineRule.pauseDispatcher()
+//        mainCoroutineRule.pauseDispatcher()                                         not here
         assertThat(saveReminderViewModel.showLoading.getOrAwaitValue()).isTrue()
 
         mainCoroutineRule.resumeDispatcher()
