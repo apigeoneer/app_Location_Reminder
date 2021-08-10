@@ -26,7 +26,6 @@ class AuthenticationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_authentication)
 
         _viewModel.authenticationState.observe(this, {
 
@@ -39,42 +38,25 @@ class AuthenticationActivity : AppCompatActivity() {
                 }
 
                 AuthenticationState.UNAUTHENTICATED -> {
+                    binding = DataBindingUtil.setContentView(this, R.layout.activity_authentication)
+
                     // Implement the create account and sign in using FirebaseUI, use sign in using email and sign in using Google
                     binding.loginBtn.setOnClickListener {
+                        Log.d(TAG, "::::::: Launching signin flow :::::::")
                         launchSignInFlow()
                     }
                 }
 
                 else -> {
-                    Log.e(TAG, "::::::: $it doesn't require any UI change :::::::" )
+                    Log.e(TAG,"::::::: $it doesn't require any UI change :::::::" )
                 }
             }
 
         })
 
-
         // A bonus is to customize the sign in flow to look nice using :
         //https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md#custom-layout
 
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SIGN_IN_REQUEST_CODE) {
-            val response = IdpResponse.fromResultIntent(data)
-            if (resultCode == Activity.RESULT_OK) {
-                // User successfully signed in
-                Log.i(TAG, "Successfully signed in user ${FirebaseAuth.getInstance().currentUser?.displayName}!")
-                val intent = Intent(this, RemindersActivity::class.java)
-                startActivity(intent)
-
-            } else {
-                // Sign in failed. If response is null the user canceled the
-                // sign-in flow using the back button. Otherwise check
-                // response.getError().getErrorCode() and handle the error.
-                Log.i(TAG, "Sign in unsuccessful ${response?.error?.errorCode}")
-            }
-        }
     }
 
     private fun launchSignInFlow() {
@@ -91,13 +73,34 @@ class AuthenticationActivity : AppCompatActivity() {
         // Create and launch sign-in intent.
         // We listen to the response of this activity with the
         // SIGN_IN_REQUEST_CODE
-        startActivityForResult(
-            AuthUI.getInstance()
-                .createSignInIntentBuilder()
-                .setAvailableProviders(providers)
-                .build(),
+        startActivityForResult(AuthUI.getInstance()
+            .createSignInIntentBuilder()
+            .setAvailableProviders(providers)
+            .build(),
             SIGN_IN_REQUEST_CODE
         )
+        Log.d(TAG, "::::::: launched signin intent :::::::")
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SIGN_IN_REQUEST_CODE) {
+            val response = IdpResponse.fromResultIntent(data)
+
+            if (resultCode == Activity.RESULT_OK) {
+                // User successfully signed in
+                Log.i(TAG, "::::::: Successfully signed in user ${FirebaseAuth.getInstance().currentUser?.displayName}! :::::::")
+                val intent = Intent(this, RemindersActivity::class.java)
+                startActivity(intent)
+
+            } else {
+                // Sign in failed. If response is null the user canceled the
+                // sign-in flow using the back button. Otherwise check
+                // response.getError().getErrorCode() and handle the error.
+                Log.i(TAG, "::::::: Sign in unsuccessful ${response?.error?.errorCode} :::::::")
+                return
+            }
+        }
     }
 
     companion object {
