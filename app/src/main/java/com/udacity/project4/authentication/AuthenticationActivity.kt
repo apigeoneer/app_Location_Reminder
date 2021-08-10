@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.firebase.ui.auth.AuthUI
@@ -21,18 +22,38 @@ class AuthenticationActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAuthenticationBinding
 
+    private val _viewModel: AuthenticationViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_authentication)
 
-        // Implement the create account and sign in using FirebaseUI, use sign in using email and sign in using Google
-        binding.loginBtn.setOnClickListener {
-            launchSignInFlow()
-        }
+        _viewModel.authenticationState.observe(this, {
 
-//          TODO: If the user was authenticated, send him to RemindersActivity
+            when (it) {
+                AuthenticationState.AUTHENTICATED -> {
+                    // If the user was authenticated, send her to RemindersActivity
+                    val intent = Intent(this, RemindersActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
 
-//          TODO: a bonus is to customize the sign in flow to look nice using :
+                AuthenticationState.UNAUTHENTICATED -> {
+                    // Implement the create account and sign in using FirebaseUI, use sign in using email and sign in using Google
+                    binding.loginBtn.setOnClickListener {
+                        launchSignInFlow()
+                    }
+                }
+
+                else -> {
+                    Log.e(TAG, "::::::: $it doesn't require any UI change :::::::" )
+                }
+            }
+
+        })
+
+
+        // A bonus is to customize the sign in flow to look nice using :
         //https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md#custom-layout
 
     }
