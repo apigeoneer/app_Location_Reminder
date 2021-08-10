@@ -47,6 +47,7 @@ class RemindersLocalRepositoryTest {
         database.close()
     }
 
+    @Test
     fun getReminders_twoRemindersFoundInCache() = runBlockingTest {
         // Given
         val reminder1 = ReminderDTO("title1", "description1", "location1",
@@ -79,18 +80,19 @@ class RemindersLocalRepositoryTest {
         assertThat(loadedReminder2.data.longitude, `is`(reminder2.longitude))
     }
 
-    fun saveReminder() = runBlockingTest {
-        // Given
-        val reminder = ReminderDTO("title", "description", "location",
-            16.78132279413486, 73.35721723965958)
+//    fun saveReminder() = runBlockingTest {
+//        // Given
+//        val reminder = ReminderDTO("title", "description", "location",
+//            16.78132279413486, 73.35721723965958)
+//
+//        // When
+//        dao.saveReminder(reminder)
+//
+//        // Then
+////        assertThat(dao, contains(reminder))
+//    }
 
-        // When
-        dao.saveReminder(reminder)
-
-        // Then
-//        assertThat(dao, contains(reminder))
-    }
-
+    @Test
     fun getReminder_oneReminderFoundInCache() = runBlockingTest {
         // Given
         val reminder = ReminderDTO("title", "description", "location",
@@ -109,6 +111,7 @@ class RemindersLocalRepositoryTest {
         assertThat(loadedReminder.data.longitude, `is`(reminder.longitude))
     }
 
+    @Test
     fun getReminder_noRemindersFoundInCache() = runBlockingTest {
         // Given
         val reminder = ReminderDTO("title", "description", "location",
@@ -124,6 +127,7 @@ class RemindersLocalRepositoryTest {
         assertThat(loadedReminder.message, `is`("Reminder not found!"))
     }
 
+    @Test
     fun deleteAllReminders_deletesTheTwoSavedReminders() = runBlockingTest {
         // Given
         val reminder1 = ReminderDTO("title1", "description1", "location1",
@@ -139,6 +143,7 @@ class RemindersLocalRepositoryTest {
         dao.deleteAllReminders()
 
         val loadedReminder = repository.getReminders()
+        loadedReminder as Result.Success
 
         // Then
         assertThat(loadedReminder, `is`(nullValue()))

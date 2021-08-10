@@ -64,6 +64,8 @@ class RemindersActivityTest :
      */
     @Before
     fun init() {
+        stopKoin()                  //stop the original app koin
+
         appContext = getApplicationContext()
         val myModule = module {
             viewModel {
@@ -94,13 +96,13 @@ class RemindersActivityTest :
         }
     }
 
-    @After
-    fun teardown() {
-        stopKoin()                  //stop the original app koin
-    }
+//    @After
+//    fun teardown() {
+//    }
 
 
     // End to End testing to the app
+
     @Test
     fun remindersActivity_DisplayedInUi_DisplaysAReminder() {
         val scenario = ActivityScenario.launch(RemindersActivity::class.java)

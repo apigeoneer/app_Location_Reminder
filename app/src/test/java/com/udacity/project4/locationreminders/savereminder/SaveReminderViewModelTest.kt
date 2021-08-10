@@ -3,7 +3,7 @@ package com.udacity.project4.locationreminders.savereminder
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.udacity.project4.locationreminders.data.FakeDataSource
+import com.udacity.project4.locationreminders.data.local.FakeDataSource
 import com.google.common.truth.Truth.assertThat
 import com.udacity.project4.R
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO

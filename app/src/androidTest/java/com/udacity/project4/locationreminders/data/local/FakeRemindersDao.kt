@@ -1,7 +1,6 @@
-package com.udacity.project4.locationreminders.data
+package com.udacity.project4.locationreminders.data.local
 
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
-import com.udacity.project4.locationreminders.data.local.RemindersDao
 import java.lang.Exception
 
 class FakeRemindersDao: RemindersDao {

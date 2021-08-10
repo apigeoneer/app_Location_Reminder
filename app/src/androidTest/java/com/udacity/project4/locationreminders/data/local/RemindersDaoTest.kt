@@ -15,7 +15,6 @@ import org.junit.runner.RunWith;
 import kotlinx.coroutines.ExperimentalCoroutinesApi;
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
 import org.junit.Test
@@ -35,6 +34,7 @@ class RemindersDaoTest {
     private lateinit var database: RemindersDatabase
     private lateinit var dao: RemindersDao
 
+
     @get: Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
@@ -43,7 +43,8 @@ class RemindersDaoTest {
         database = Room.inMemoryDatabaseBuilder(
             ApplicationProvider.getApplicationContext(),
             RemindersDatabase::class.java
-        ).build()
+        ).allowMainThreadQueries()
+            .build()
         dao = database.reminderDao()
     }
 
@@ -61,21 +62,21 @@ class RemindersDaoTest {
         val reminder2 = ReminderDTO("title2", "description2", "location2",
             15.78132279413486, 83.35721723965958)
 
-        database.reminderDao().saveReminder(reminder1)
-        database.reminderDao().saveReminder(reminder2)
+        dao.saveReminder(reminder1)
+        dao.saveReminder(reminder2)
 
         // When fetching reminders
-        val remindersList = database.reminderDao().getReminders()
+        val remindersList = dao.getReminders()
 
         // Then 2 reminders are received with all the expected values
         assertThat(remindersList.size, `is`(2))
 
         assertThat(remindersList[0].id, `is`(reminder1.id))
-        assertThat(remindersList[1].title, `is`(reminder2.id))
-        assertThat(remindersList[0].description, `is`(reminder1.id))
-        assertThat(remindersList[1].location, `is`(reminder2.id))
-        assertThat(remindersList[0].latitude, `is`(reminder1.id))
-        assertThat(remindersList[1].longitude, `is`(reminder2.id))
+        assertThat(remindersList[1].title, `is`(reminder2.title))
+        assertThat(remindersList[0].description, `is`(reminder1.description))
+        assertThat(remindersList[1].location, `is`(reminder2.location))
+        assertThat(remindersList[0].latitude, `is`(reminder1.latitude))
+        assertThat(remindersList[1].longitude, `is`(reminder2.longitude))
     }
 
     @Test
@@ -84,10 +85,10 @@ class RemindersDaoTest {
         val reminder = ReminderDTO("title", "description", "location",
             16.78132279413486, 73.35721723965958)
 
-        database.reminderDao().saveReminder(reminder)
+        dao.saveReminder(reminder)
 
         // When fetching its id after having saved it in the db
-        val loadedReminder = database.reminderDao().getReminderById(reminder.id)
+        val loadedReminder = dao.getReminderById(reminder.id)
 
         // Then the reminder contains all the expected values
 //        assertThat<ReminderDTO>(loaded as ReminderDTO, notNullValue())
@@ -101,17 +102,18 @@ class RemindersDaoTest {
     }
 
     @Test
-    fun getReminderById_returnsNullForNonExistantId() = runBlockingTest {
+    fun getReminderById_returnsNullForNonExistentId() = runBlockingTest {
         // Given a reminder id (that does not exist)
         val reminderId = UUID.randomUUID().toString()
 
-        // When fetching the reminder from the id (non existant)
-        val loadedReminder = database.reminderDao().getReminderById(reminderId)
+        // When fetching the reminder from the id (non existent)
+        val loadedReminder = dao.getReminderById(reminderId)
 
         // Then the loaded reminder is null
         assertNull(loadedReminder)
     }
 
+    @Test
     fun deleteAllReminders_deletes2Reminders() = runBlockingTest {
         // Given 2 reminders in the db
         val reminder1 = ReminderDTO("title1", "description1", "location1",
@@ -120,14 +122,14 @@ class RemindersDaoTest {
         val reminder2 = ReminderDTO("title2", "description2", "location2",
             15.78132279413486, 83.35721723965958)
 
-        database.reminderDao().saveReminder(reminder1)
-        database.reminderDao().saveReminder(reminder2)
+        dao.saveReminder(reminder1)
+        dao.saveReminder(reminder2)
 
         // When deleting all reminders
-        database.reminderDao().deleteAllReminders()
+        dao.deleteAllReminders()
 
         // Then the reminders list becomes empty
-        val remindersList = database.reminderDao().getReminders()
+        val remindersList = dao.getReminders()
         assertThat(remindersList.isEmpty(), `is`(true))
     }
 

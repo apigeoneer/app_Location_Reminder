@@ -151,6 +151,9 @@ dependencies {
     androidTestImplementation "com.linkedin.dexmaker:dexmaker-mockito:$dexMakerVersion"
     androidTestImplementation('org.koin:koin-test:2.0.1') { exclude group: 'org.mockito' }
 
+    debugImplementation "androidx.fragment:fragment-testing:$fragmentVersion"
+
+
     //firebase authentication
     implementation 'com.firebaseui:firebase-ui-auth:5.0.0'
 
