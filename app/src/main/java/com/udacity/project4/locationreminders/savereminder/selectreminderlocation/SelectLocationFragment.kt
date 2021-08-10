@@ -19,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.udacity.project4.R
@@ -66,7 +67,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         mapFragment?.getMapAsync(this)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
-//        TODO: add style to the map
+
+        // Add style to the map
+        val mapStyleOptions: MapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.google_style)
+        map.setMapStyle(mapStyleOptions)
 
         return binding.root
     }
