@@ -10,7 +10,6 @@
     <string name="reminder_saved">Reminder Saved !</string>
     <string name="logout">Logout</string>
     <string name="welcome_to_the_location_reminder_app">Welcome to the location reminder app</string>
-    <string name="login">Login</string>
     <string name="title_activity_maps">Map</string>
     <string name="normal_map">Normal Map</string>
     <string name="hybrid_map">Hybrid Map</string>
@@ -42,4 +41,8 @@
     <string name="error_adding_geofence">Error Happened, Can\'t Add Geofence</string>
 
     <string name="google_maps_API_KEY">AIzaSyB3FnPxPEw8gCTgyQbNVIhpW1uNAKJuP9M</string>
+    <string name="login">Login</string>
+    <string name="reminder_details">Reminder Details</string>
+    <string name="add_reminder_fab">Add reminder fab</string>
+    <string name="save_reminder_fab">Save reminder fab</string>
 </resources>

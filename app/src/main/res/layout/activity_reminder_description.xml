@@ -22,14 +22,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
-            android:text="Reminder Details"
+            android:text="@string/reminder_details"
             android:textSize="24sp" />
 
         <TextView
             android:id="@+id/title_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text=""
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -37,21 +37,21 @@
             android:id="@+id/desc_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:text="" />
 
         <TextView
             android:id="@+id/location_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:text="TextView"
+            android:text=""
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/latitude_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text=""
             android:textSize="12sp"
             android:textStyle="italic" />
 
@@ -59,7 +59,7 @@
             android:id="@+id/longitude_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text=""
             android:textSize="12sp"
             android:textStyle="italic" />
     </LinearLayout>
