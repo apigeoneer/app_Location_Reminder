@@ -1,7 +1,11 @@
 package com.udacity.project4.locationreminders.reminderslist
 
 import android.app.Application
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.udacity.project4.base.BaseViewModel
 import com.udacity.project4.locationreminders.data.ReminderDataSource
@@ -58,3 +62,18 @@ class RemindersListViewModel(
         showNoData.value = remindersList.value == null || remindersList.value!!.isEmpty()
     }
 }
+
+//class RemindersViewModelFactory(
+//    private val app: Application,
+//    private val dataSource: ReminderDataSource
+//) : ViewModelProvider.Factory {
+//
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    @Suppress("UNCHECKED_CAST")
+//    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+//        if (modelClass.isAssignableFrom(RemindersListViewModel::class.java)) {
+//            return RemindersListViewModel(app, dataSource) as T
+//        }
+//        throw IllegalArgumentException("Unable to construct RemindersListViewModel")
+//    }
+//}
