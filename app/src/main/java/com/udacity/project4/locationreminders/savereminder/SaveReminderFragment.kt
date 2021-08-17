@@ -39,7 +39,8 @@ class SaveReminderFragment : BaseFragment() {
         val intent = Intent(context, GeofenceBroadcastReceiver::class.java)
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
         // addGeofences() and removeGeofence()
-        PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        intent.action = "action.ACTION_GEOFENCE_EVENT"
+        PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     override fun onCreateView(
@@ -85,10 +86,11 @@ class SaveReminderFragment : BaseFragment() {
             // add a geofence request
             if (_viewModel.validateEnteredData(reminderData)) {
                 addGeofence(reminderData)
+                _viewModel.validateAndSaveReminder(reminderData)
             }
 
             // validate & save reminder (title + desc + geofence) to db
-            saveReminderToDb(reminderData)
+//            saveReminderToDb(reminderData)
 
         }
     }
@@ -146,9 +148,9 @@ class SaveReminderFragment : BaseFragment() {
 
     }
 
-    private fun saveReminderToDb(reminderDataItem: ReminderDataItem) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            _viewModel.validateAndSaveReminder(reminderDataItem)
-        }
-    }
+//    private fun saveReminderToDb(reminderDataItem: ReminderDataItem) {
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            _viewModel.validateAndSaveReminder(reminderDataItem)
+//        }
+//    }
 }

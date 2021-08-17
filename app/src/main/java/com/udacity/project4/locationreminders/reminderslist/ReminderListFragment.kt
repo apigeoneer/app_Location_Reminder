@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
+import com.firebase.ui.auth.AuthUI
 import com.udacity.project4.R
 import com.udacity.project4.authentication.AuthenticationActivity
 import com.udacity.project4.base.BaseFragment
@@ -20,15 +21,12 @@ class ReminderListFragment : BaseFragment() {
     //use Koin to retrieve the ViewModel instance
     override val _viewModel: RemindersListViewModel by viewModel()
     private lateinit var binding: FragmentRemindersBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding =
-            DataBindingUtil.inflate(
-                inflater,
-                R.layout.fragment_reminders, container, false
-            )
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_reminders, container, false)
         binding.viewModel = _viewModel
 
         setHasOptionsMenu(true)
@@ -75,8 +73,13 @@ class ReminderListFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.logout -> {
-                val intent = Intent(context, AuthenticationActivity::class.java)
-                startActivity(intent)
+                AuthUI.getInstance().signOut(requireContext()).addOnCompleteListener {
+                    if(it.isSuccessful) {
+                        val intent = Intent(requireContext(), AuthenticationActivity::class.java)
+                        startActivity(intent)
+                        requireActivity().finish()
+                    }
+                }
             }
         }
         return super.onOptionsItemSelected(item)

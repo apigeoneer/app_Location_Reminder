@@ -63,10 +63,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         setHasOptionsMenu(true)
         setDisplayHomeAsUpEnabled(true)
 
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
+
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
-
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
         // Add style to the map
         val mapStyleOptions: MapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.google_style)
