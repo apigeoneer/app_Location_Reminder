@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
@@ -27,21 +29,13 @@ import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
+
 class SaveReminderFragment : BaseFragment() {
     // Get the view model this time as a single to be shared with the another fragment
     override val _viewModel: SaveReminderViewModel by inject()
     private lateinit var binding: FragmentSaveReminderBinding
 
     lateinit var geofencingClient: GeofencingClient
-
-    // this pending intent starts the geofence broadcast receiver
-    private val geofencePendingIntent: PendingIntent by lazy {
-        val intent = Intent(context, GeofenceBroadcastReceiver::class.java)
-        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
-        // addGeofences() and removeGeofence()
-        intent.action = "action.ACTION_GEOFENCE_EVENT"
-        PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -70,6 +64,7 @@ class SaveReminderFragment : BaseFragment() {
         binding.saveReminder.setOnClickListener {
             val title = _viewModel.reminderTitle.value
             val description = _viewModel.reminderDescription.value
+            val poi = _viewModel.selectedPOI.value
             val location = _viewModel.reminderSelectedLocationStr.value
             val latitude = _viewModel.latitude.value
             val longitude = _viewModel.longitude.value
@@ -77,6 +72,7 @@ class SaveReminderFragment : BaseFragment() {
             val reminderData = ReminderDataItem(
                 title,
                 description,
+//                poi?.name,
                 location,
                 latitude,
                 longitude,
@@ -86,11 +82,8 @@ class SaveReminderFragment : BaseFragment() {
             // add a geofence request
             if (_viewModel.validateEnteredData(reminderData)) {
                 addGeofence(reminderData)
-                _viewModel.validateAndSaveReminder(reminderData)
             }
-
-            // validate & save reminder (title + desc + geofence) to db
-//            saveReminderToDb(reminderData)
+            _viewModel.validateAndSaveReminder(reminderData)
 
         }
     }
@@ -126,6 +119,16 @@ class SaveReminderFragment : BaseFragment() {
             setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
             addGeofence(geofence)
         }.build()
+
+
+        // this pending intent starts the geofence broadcast receiver
+        val geofencePendingIntent: PendingIntent by lazy {
+            val intent = Intent(context, GeofenceBroadcastReceiver::class.java)
+            // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
+            // addGeofences() and removeGeofence()
+            intent.action = "action.ACTION_GEOFENCE_EVENT"
+            PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
 
         // Add geofences
         if (ActivityCompat.checkSelfPermission(
