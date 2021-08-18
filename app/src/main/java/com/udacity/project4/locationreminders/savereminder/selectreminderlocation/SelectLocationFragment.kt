@@ -67,10 +67,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
-
-        // Add style to the map
-        val mapStyleOptions: MapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.google_style)
-        map.setMapStyle(mapStyleOptions)
+//
+//        // Add style to the map
+//        val mapStyleOptions: MapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.google_style)
+//        map.setMapStyle(mapStyleOptions)
 
         return binding.root
     }
@@ -123,6 +123,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
      */
     override fun onMapReady(googleMap: GoogleMap?) {
         map = googleMap!!
+
+        // Add style to the map
+        val mapStyleOptions: MapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.google_style)
+        map.setMapStyle(mapStyleOptions)
 
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI()

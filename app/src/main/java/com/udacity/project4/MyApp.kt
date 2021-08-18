@@ -36,7 +36,10 @@ class MyApp : MultiDexApplication() {
                     get() as ReminderDataSource
                 )
             }
+            // RemindersLocalRepository
             single { RemindersLocalRepository(get()) }
+            // ReminderDataSource
+            single<ReminderDataSource> { get<RemindersLocalRepository>() }
             single { LocalDB.createRemindersDao(this@MyApp) }
         }
 
