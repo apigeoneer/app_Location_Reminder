@@ -138,9 +138,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                      */
                     _viewModel.showSnackBar.postValue("Location permission is required to add location to your reminder.")
 
-                    /**
-                     * this starts a sort of infinite iteration of [updateLocationUI, getLocationPermission & onRequestPermissionsResult]
-                     */
                 }
             }
         }
