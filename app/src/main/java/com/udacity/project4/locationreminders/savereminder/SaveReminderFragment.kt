@@ -41,6 +41,8 @@ class SaveReminderFragment : BaseFragment() {
 
     private var reminderData = ReminderDataItem("", "", "", 0.0, 0.0, "")
 
+    private lateinit var cntxt: Context
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -101,6 +103,11 @@ class SaveReminderFragment : BaseFragment() {
         }
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        cntxt = context
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         // make sure to clear the view model after destroy, as it's a single view model.
@@ -136,7 +143,7 @@ class SaveReminderFragment : BaseFragment() {
 
         // this pending intent starts the geofence broadcast receiver
         val geofencePendingIntent: PendingIntent by lazy {
-            val intent = Intent(context, GeofenceBroadcastReceiver::class.java)
+            val intent = Intent(cntxt, GeofenceBroadcastReceiver::class.java)
             // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
             // addGeofences() and removeGeofence()
             intent.action = "action.ACTION_GEOFENCE_EVENT"
@@ -155,12 +162,12 @@ class SaveReminderFragment : BaseFragment() {
             addOnSuccessListener {
                 // Geofence added
                 if (isAdded) {
-                    Toast.makeText(context, "Geofence added!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(cntxt, "Geofence added!", Toast.LENGTH_SHORT).show()
                 }
             }
             addOnFailureListener {
                 // Failed to add geofence
-                Toast.makeText(context, "Failed to add geofence", Toast.LENGTH_SHORT).show()
+                Toast.makeText(cntxt, "Failed to add geofence", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -185,7 +192,7 @@ class SaveReminderFragment : BaseFragment() {
                     exception.startResolutionForResult(requireActivity(),
                         REQUEST_TURN_DEVICE_LOCATION_ON)
                 } catch (sendEx: IntentSender.SendIntentException) {
-                    Log.d(TAG, "Error getting location settings resolution: " + sendEx.message)
+                    Log.d(TAG,"Error getting location settings resolution: " + sendEx.message)
                 }
             } else {
                 Snackbar.make(
