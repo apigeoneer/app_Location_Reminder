@@ -193,6 +193,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             val poiMarker = map.addMarker(MarkerOptions().position(poi.latLng).title(poi.name)).also {
                 selectedMarker = it
             }
+            map.animateCamera(CameraUpdateFactory.newLatLng(poi.latLng))
+            onLocationSelected(poi.latLng)
             poiMarker.showInfoWindow()
         }
     }
