@@ -47,7 +47,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private var locationPermissionGranted = false
-    private var lastKnownLocation: Location?= null
+    private var lastKnownLocation: Location? = null
     private val defaultLocation = LatLng(-33.852, 151.211)                       // Sydney
     private var selectedMarker: Marker? = null
 
@@ -175,7 +175,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             map.uiSettings.isMyLocationButtonEnabled = false
         }
 
-        // Put a marker to location that the user selected
+        // Put a marker on the location that the user selected
         map.setOnMapClickListener { latLng ->
             selectedMarker?.remove()
             selectedMarker?.position = latLng
@@ -184,6 +184,16 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             }
             map.animateCamera(CameraUpdateFactory.newLatLng(latLng))
             onLocationSelected(latLng)
+        }
+
+        // Put a marker on the poi that the user selected
+        map.setOnPoiClickListener { poi ->
+            selectedMarker?.remove()
+            selectedMarker?.position = poi.latLng
+            val poiMarker = map.addMarker(MarkerOptions().position(poi.latLng).title(poi.name)).also {
+                selectedMarker = it
+            }
+            poiMarker.showInfoWindow()
         }
     }
 
