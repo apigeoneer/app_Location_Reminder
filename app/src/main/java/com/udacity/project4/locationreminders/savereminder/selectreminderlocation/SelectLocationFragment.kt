@@ -129,10 +129,21 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 if (grantResults.isNotEmpty() &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     locationPermissionGranted = true
+                    updateLocationUI()
+
+                } else {
+                    /**
+                     * If user doesn't grant the permission, give a proper message telling her/him
+                     * why our app actually requires the location permission
+                     */
+                    _viewModel.showSnackBar.postValue("Location permission is required to add location to your reminder.")
+
+                    /**
+                     * this starts a sort of infinite iteration of [updateLocationUI, getLocationPermission & onRequestPermissionsResult]
+                     */
                 }
             }
         }
-        updateLocationUI()
     }
 
     /**
