@@ -136,7 +136,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                      * If user doesn't grant the permission, give a proper message telling her/him
                      * why our app actually requires the location permission
                      */
-                    _viewModel.showSnackBar.postValue("Location permission is required to add location to your reminder.")
+                    _viewModel.showSnackBar.postValue(getString(R.string.location_required_error))
 
                 }
             }

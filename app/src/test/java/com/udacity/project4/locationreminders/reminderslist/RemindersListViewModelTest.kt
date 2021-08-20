@@ -2,7 +2,10 @@ package com.udacity.project4.locationreminders.reminderslist
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.udacity.project4.R
 import com.udacity.project4.locationreminders.data.local.FakeDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.getOrAwaitValue
@@ -16,6 +19,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.context.stopKoin
+import androidx.test.espresso.assertion.ViewAssertions.matches
+
 
 @RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
