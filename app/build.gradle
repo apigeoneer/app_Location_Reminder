@@ -112,6 +112,15 @@ dependencies {
     implementation "org.koin:koin-androidx-viewmodel:$koinVersion"
 
     implementation "androidx.test.espresso:espresso-idling-resource:$espressoVersion"
+//    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
+//    androidTestImplementation "androidx.test.espresso:espresso-idling-resource:$espressoVersion"
+//
+//    androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.2', {
+//        exclude group: 'com.android.support', module: 'support-annotations'
+//    })
+//    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+//    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+//    androidTestImplementation 'com.android.support.test.espresso:espresso-intents:3.0.2'
 
     // Dependencies for local unit tests
     testImplementation "junit:junit:$junitVersion"

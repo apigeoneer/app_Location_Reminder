@@ -11,7 +11,7 @@ class FakeDataSource(var reminders: MutableList<ReminderDTO>?) : ReminderDataSou
 
     // Create a fake data source to act as a double to the real data source
 
-    private var shouldReturnError = false
+//    private var shouldReturnError = false
 
     override suspend fun saveReminder(reminder: ReminderDTO) {
         reminders?.add(reminder)
@@ -28,7 +28,14 @@ class FakeDataSource(var reminders: MutableList<ReminderDTO>?) : ReminderDataSou
 
         // if reminders isn't null, then return a Success result with our list of reminders
         // and if it is null, then return an Error result
-        reminders?.let { return Result.Success(ArrayList(it)) }
+        try {
+            reminders?.let {
+                return Result.Success(ArrayList(it))
+            }
+        } catch (ex: Exception) {
+            return Result.Error(ex.localizedMessage)
+        }
+
         return Result.Error("Reminders not found")
     }
 
@@ -36,9 +43,17 @@ class FakeDataSource(var reminders: MutableList<ReminderDTO>?) : ReminderDataSou
 //        if (shouldReturnError)
 //            return Result.Error("Error getting Reminder")
 
+//        val reminder = remindersDao.getReminderById(id)
+
         reminders?.forEach {
             return when(id) {
-                it.id -> Result.Success(it)
+                it.id -> {
+                    try {
+                        Result.Success(it)
+                    } catch (e: Exception) {
+                        return Result.Error(e.localizedMessage)
+                    }
+                }
                 else -> Result.Error("No reminder found with id $id")
             }
         }
