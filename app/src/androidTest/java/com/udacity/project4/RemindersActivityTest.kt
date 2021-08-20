@@ -9,9 +9,11 @@ import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.rule.ActivityTestRule
 import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
@@ -23,8 +25,10 @@ import com.udacity.project4.util.DataBindingIdlingResource
 import com.udacity.project4.util.monitorActivity
 import com.udacity.project4.utils.EspressoIdlingResource
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.CoreMatchers.not
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -44,6 +48,9 @@ class RemindersActivityTest :
     private lateinit var repository: ReminderDataSource
     private lateinit var appContext: Application
     private val dataBindingIdlingResource = DataBindingIdlingResource()
+
+    @Rule
+    var activityRule: ActivityTestRule<RemindersActivity?> = ActivityTestRule(RemindersActivity::class.java)
 
     @Before
     fun registerIdlingResource(): Unit = IdlingRegistry.getInstance().run {
@@ -100,6 +107,11 @@ class RemindersActivityTest :
 //    fun teardown() {
 //    }
 
+//    private fun getActivity(activityScenario: ActivityScenario<RemindersActivity>): Activity? {
+//        var activity: Activity? = null
+//        activityScenario.onActivity { activity = it }
+//        return activity
+//    }
 
     // End to End testing to the app
 
@@ -115,6 +127,13 @@ class RemindersActivityTest :
         onView(withId(R.id.reminderDescription)).perform(typeText("description"))
         onView(withId(R.id.selectLocation)).perform(click())
         onView(withId(R.id.map)).perform(click())
+
+//        Thread.sleep(500)
+        // Test the snack bar displayed when user denies location permission
+        onView(withId(com.google.android.material.R.id.snackbar_text))
+            .check(matches(withText(R.string.location_required_error)))
+//        Thread.sleep(3000)
+
         Espresso.pressBack()
         onView(withId(R.id.saveReminder)).perform(click())
 
@@ -124,6 +143,14 @@ class RemindersActivityTest :
         runBlocking {
             repository.saveReminder(reminder)
         }
+
+        // Test "Reminder saved" Toast
+        onView(withText(R.string.reminder_saved))
+            .inRoot(withDecorView(not((activityRule.activity?.window?.decorView))))
+            .check(matches(isDisplayed()))
+//        Thread.sleep(1000)
+
+        onView(withId(R.id.noDataTextView)).check(matches(withEffectiveVisibility(Visibility.GONE)))
 
         onView(withText("title")).check(matches(isDisplayed()))
         onView(withText("description")).check(matches(isDisplayed()))

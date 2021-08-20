@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -46,7 +47,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private var locationPermissionGranted = false
-    private var lastKnownLocation: Location?= null
+    private var lastKnownLocation: Location? = null
     private val defaultLocation = LatLng(-33.852, 151.211)                       // Sydney
     private var selectedMarker: Marker? = null
 
@@ -54,6 +55,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
+        Log.d(TAG, "onCreateView")
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_select_location, container, false)
 
@@ -80,6 +82,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
      * If not, request the permission
      */
     private fun getLocationPermission() {
+        Log.d(TAG, "getLocationPermission")
         /*
          * Request location permission, so that we can get the location of the
          * device. The result of the permission request is handled by a callback,
@@ -90,11 +93,23 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             == PackageManager.PERMISSION_GRANTED) {
             locationPermissionGranted = true
         } else {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
+
+//            ActivityCompat.requestPermissions(
+//                requireActivity(),
+//                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+//                PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
+//            )
+
+            /**
+             * comment1 => requestPermissions() is called in an activity, here we are actually in a fragment,
+             * so we should call Fragment.requestPermissions(@NonNull permissions: Array<String!>, requestCode: Int)
+             */
+            requestPermissions(
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
             )
+
+
         }
     }
 
@@ -104,6 +119,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<String>,
                                             grantResults: IntArray) {
+        Log.d(TAG, "onRequestPermissionsResult")
+
         locationPermissionGranted = false
         when (requestCode) {
             PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
@@ -112,16 +129,26 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 if (grantResults.isNotEmpty() &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     locationPermissionGranted = true
+                    updateLocationUI()
+
+                } else {
+                    /**
+                     * If user doesn't grant the permission, give a proper message telling her/him
+                     * why our app actually requires the location permission
+                     */
+                    _viewModel.showSnackBar.postValue(getString(R.string.location_required_error))
+
                 }
             }
         }
-        updateLocationUI()
     }
 
     /**
      * Set up the map when the GoogleMap object is available
      */
     override fun onMapReady(googleMap: GoogleMap?) {
+        Log.d(TAG, "onMapReady")
+
         map = googleMap!!
 
         // Add style to the map
@@ -148,7 +175,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             map.uiSettings.isMyLocationButtonEnabled = false
         }
 
-        // Put a marker to location that the user selected
+        // Put a marker on the location that the user selected
         map.setOnMapClickListener { latLng ->
             selectedMarker?.remove()
             selectedMarker?.position = latLng
@@ -158,6 +185,18 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             map.animateCamera(CameraUpdateFactory.newLatLng(latLng))
             onLocationSelected(latLng)
         }
+
+        // Put a marker on the poi that the user selected
+        map.setOnPoiClickListener { poi ->
+            selectedMarker?.remove()
+            selectedMarker?.position = poi.latLng
+            val poiMarker = map.addMarker(MarkerOptions().position(poi.latLng).title(poi.name)).also {
+                selectedMarker = it
+            }
+            map.animateCamera(CameraUpdateFactory.newLatLng(poi.latLng))
+            onLocationSelected(poi.latLng)
+            poiMarker.showInfoWindow()
+        }
     }
 
     /**
@@ -166,6 +205,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
      * otherwise disable the layer and the control, and set the current location to null.
      */
     private fun updateLocationUI() {
+        Log.d(TAG, "updateLocationUI")
+
         try {
             if (locationPermissionGranted) {
                 map.isMyLocationEnabled = true
@@ -186,6 +227,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
      * then use that location to position the map.
      */
     private fun getDeviceLocation() {
+        Log.d(TAG, "getDeviceLocation")
         /*
          * Get the best and most recent location of the device, which may be null in rare
          * cases when a location is not available.
@@ -235,6 +277,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
      * and navigate back to the previous fragment to save the reminder and add the geofence
      */
     private fun onLocationSelected(latLng: LatLng) {
+        Log.d(TAG, "onLocationSelected")
+
         _viewModel.latitude.postValue(latLng.latitude)
         _viewModel.longitude.postValue(latLng.longitude)
 
