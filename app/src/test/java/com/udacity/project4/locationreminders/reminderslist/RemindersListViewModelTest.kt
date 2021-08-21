@@ -78,6 +78,21 @@ class RemindersListViewModelTest {
     }
 
     @Test
+    fun loadReminders_notShowsLoadingForPopulatedRemindersList() {
+        // Given a fresh view model & a data source containing an empty reminders list
+        dataSource = FakeDataSource(mutableListOf(reminder1, reminder2))
+        remindersListViewModel = RemindersListViewModel(ApplicationProvider
+            .getApplicationContext(), dataSource)
+        mainCoroutineRule.pauseDispatcher()
+
+        // When loading reminders
+        remindersListViewModel.loadReminders()
+
+        // Then showLoading is true as there are no reminders
+        assertThat(remindersListViewModel.showLoading.getOrAwaitValue(), `is`(false))
+    }
+
+    @Test
     fun loadReminders_returnsErrorForNullRemindersList() {
         // Given a fresh view model & a data source containing null
         dataSource = FakeDataSource(null)
