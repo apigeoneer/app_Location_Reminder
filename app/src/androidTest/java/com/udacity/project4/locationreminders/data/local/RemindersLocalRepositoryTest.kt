@@ -23,12 +23,12 @@ import org.junit.runner.RunWith
 @MediumTest                                           // Medium => integrated test
 class RemindersLocalRepositoryTest {
 
+    @get:Rule
+    var instantExecutorRule=InstantTaskExecutorRule()
+
     private lateinit var database: RemindersDatabase
     private lateinit var dao: RemindersDao
     private lateinit var repository: RemindersLocalRepository
-
-    @get:Rule
-    var instantExecutorRule=InstantTaskExecutorRule()
 
     @Before
     fun setup() {
@@ -113,17 +113,17 @@ class RemindersLocalRepositoryTest {
 
     @Test
     fun getReminder_noRemindersFoundInCache() = runBlockingTest {
-        // Given
+//        // Given
         val reminder = ReminderDTO("title", "description", "location",
             16.78132279413486, 73.35721723965958)
-        dao.saveReminder(reminder)
-
+//        dao.saveReminder(reminder)
+//
         // When
         val loadedReminder = repository.getReminder(reminder.id)
-        loadedReminder as Result.Error
 
         // Then
         assertThat(loadedReminder, `is`(nullValue()))
+        loadedReminder as Result.Error
         assertThat(loadedReminder.message, `is`("Reminder not found!"))
     }
 
