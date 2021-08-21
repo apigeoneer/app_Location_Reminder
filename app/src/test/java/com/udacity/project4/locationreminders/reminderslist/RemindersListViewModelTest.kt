@@ -14,6 +14,7 @@ import org.hamcrest.core.IsNot.not
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -85,27 +86,22 @@ class RemindersListViewModelTest {
         assertThat(remindersListViewModel.showLoading.getOrAwaitValue(), `is`(true))
     }
 
-//    @Test
-//    fun loadReminders_notShowsLoadingForPopulatedRemindersList() {
-//        try {
-//            // Given a fresh view model & a data source containing an empty reminders list
-//            dataSource=FakeDataSource(mutableListOf(reminder1, reminder2))
-//            remindersListViewModel=RemindersListViewModel(
-//                ApplicationProvider
-//                    .getApplicationContext(), dataSource
-//            )
-//            mainCoroutineRule.pauseDispatcher()
-//
-//            // When loading reminders
-//            remindersListViewModel.loadReminders()
-//
-//            shadowOf(Looper.getMainLooper()).idle()
-//            // Then showLoading is true as there are no reminders
-//            assertThat(remindersListViewModel.showLoading.getOrAwaitValue(), `is`(false))
-//        } catch (e: Exception) {
-//            fail(e);
-//        }
-//    }
+    @Test
+    fun loadReminders_notShowsLoadingForPopulatedRemindersList() {
+        // Given a fresh view model & a data source containing an empty reminders list
+        dataSource=FakeDataSource(mutableListOf(reminder1, reminder2))
+        remindersListViewModel=RemindersListViewModel(
+            ApplicationProvider
+                .getApplicationContext(), dataSource
+        )
+
+        mainCoroutineRule.pauseDispatcher()
+        remindersListViewModel.loadReminders()
+        assertThat(remindersListViewModel.showLoading.getOrAwaitValue(), `is`(true))
+
+        mainCoroutineRule.resumeDispatcher()
+        assertThat(remindersListViewModel.showLoading.getOrAwaitValue(), `is`(false))
+    }
 
     @Test
     fun loadReminders_returnsErrorForNullRemindersList() {
@@ -118,10 +114,7 @@ class RemindersListViewModelTest {
         remindersListViewModel.loadReminders()
 
         // Then a snack bar with the message "No reminders found" is shown
-        assertThat(
-            remindersListViewModel.showSnackBar.getOrAwaitValue(),
-            `is`("Reminders not found")
-        )
+        assertThat(remindersListViewModel.showSnackBar.getOrAwaitValue(), `is`("Reminders not found"))
     }
 
 
