@@ -11,7 +11,7 @@ class FakeDataSource(var reminders: MutableList<ReminderDTO>?) : ReminderDataSou
 
     // Create a fake data source to act as a double to the real data source
 
-//    private var shouldReturnError = false
+    private var shouldReturnError = false
 
     override suspend fun saveReminder(reminder: ReminderDTO) {
         reminders?.add(reminder)
@@ -23,37 +23,21 @@ class FakeDataSource(var reminders: MutableList<ReminderDTO>?) : ReminderDataSou
 
     // implement members of the ReminderDataSource
     override suspend fun getReminders(): Result<List<ReminderDTO>> {
-//        if (shouldReturnError)
-//                return Result.Error("Error getting reminders")
+        if (shouldReturnError)
+            return Result.Error("Error getting Reminders")
 
-        // if reminders isn't null, then return a Success result with our list of reminders
-        // and if it is null, then return an Error result
-        try {
-            reminders?.let {
-                return Result.Success(ArrayList(it))
-            }
-        } catch (ex: Exception) {
-            return Result.Error(ex.localizedMessage)
-        }
+        reminders?.let{ return Result.Success(ArrayList(it)) }
 
         return Result.Error("Reminders not found")
     }
 
     override suspend fun getReminder(id: String): Result<ReminderDTO> {
-//        if (shouldReturnError)
-//            return Result.Error("Error getting Reminder")
-
-//        val reminder = remindersDao.getReminderById(id)
+        if (shouldReturnError)
+            return Result.Error("Error getting Reminder")
 
         reminders?.forEach {
             return when(id) {
-                it.id -> {
-                    try {
-                        Result.Success(it)
-                    } catch (e: Exception) {
-                        return Result.Error(e.localizedMessage)
-                    }
-                }
+                it.id -> Result.Success(it)
                 else -> Result.Error("No reminder found with id $id")
             }
         }
