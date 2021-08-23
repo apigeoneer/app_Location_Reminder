@@ -31,6 +31,7 @@ import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSaveReminderBinding
 import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
 import com.udacity.project4.locationreminders.geofence.GeofenceConstants
+import com.udacity.project4.locationreminders.geofence.GeofenceHelper
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import kotlinx.coroutines.launch
@@ -42,7 +43,9 @@ class SaveReminderFragment : BaseFragment() {
     override val _viewModel: SaveReminderViewModel by inject()
     private lateinit var binding: FragmentSaveReminderBinding
 
+    private lateinit var geofenceHelper: GeofenceHelper
     private lateinit var geofencingClient: GeofencingClient
+
     private lateinit var reminderDataItem: ReminderDataItem
     private lateinit var cntxt: Context
     private val runningQOrLater = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
@@ -65,7 +68,9 @@ class SaveReminderFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = this
 
+        geofenceHelper = GeofenceHelper(context)
         geofencingClient = LocationServices.getGeofencingClient(requireContext())
+
         binding.selectLocation.setOnClickListener {
             // Navigate to another fragment to get the user location
             _viewModel.navigationCommand.value =
