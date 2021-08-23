@@ -1,6 +1,5 @@
 package com.udacity.project4.locationreminders.data.local
 
-import android.R.attr
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
@@ -15,6 +14,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.*
 import org.junit.runner.RunWith
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 
 
 @ExperimentalCoroutinesApi
@@ -26,29 +26,20 @@ class RemindersLocalRepositoryTest {
     @get:Rule
     var instantExecutorRule=InstantTaskExecutorRule()
 
-    private lateinit var database: RemindersDatabase
-    private lateinit var dao: RemindersDao
+    @get:Rule
+    var mainCoroutineRule=MainCoroutineRule()
+
+    private lateinit var dao: FakeRemindersDao
     private lateinit var repository: RemindersLocalRepository
 
     @Before
     fun setup() {
-        database = Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(),
-            RemindersDatabase::class.java
-        ).allowMainThreadQueries()
-            .build()
-
-        dao = database.reminderDao()
-        repository = RemindersLocalRepository(database.reminderDao(), Dispatchers.Main)
-    }
-
-    @After
-    fun teardown() {
-        database.close()
+        dao = FakeRemindersDao()
+        repository = RemindersLocalRepository(dao, Dispatchers.Unconfined)
     }
 
     @Test
-    fun getReminders_twoRemindersFoundInCache() = runBlockingTest {
+    fun getReminders_twoRemindersFoundInCache() = mainCoroutineRule.runBlockingTest {
         // Given
         val reminder1 = ReminderDTO("title1", "description1", "location1",
             16.78132279413486, 73.35721723965958)
@@ -93,7 +84,7 @@ class RemindersLocalRepositoryTest {
 //    }
 
     @Test
-    fun getReminder_oneReminderFoundInCache() = runBlockingTest {
+    fun getReminder_oneReminderFoundInCache() = mainCoroutineRule.runBlockingTest {
         // Given
         val reminder = ReminderDTO("title", "description", "location",
             16.78132279413486, 73.35721723965958)
@@ -112,7 +103,7 @@ class RemindersLocalRepositoryTest {
     }
 
     @Test
-    fun getReminder_noRemindersFoundInCache() = runBlockingTest {
+    fun getReminder_noRemindersFoundInCache() = mainCoroutineRule.runBlockingTest {
 //        // Given
         val reminder = ReminderDTO("title", "description", "location",
             16.78132279413486, 73.35721723965958)
@@ -128,7 +119,7 @@ class RemindersLocalRepositoryTest {
     }
 
     @Test
-    fun deleteAllReminders_deletesTheTwoSavedReminders() = runBlockingTest {
+    fun deleteAllReminders_deletesTheTwoSavedReminders() = mainCoroutineRule.runBlockingTest {
         // Given
         val reminder1 = ReminderDTO("title1", "description1", "location1",
             16.78132279413486, 73.35721723965958)
