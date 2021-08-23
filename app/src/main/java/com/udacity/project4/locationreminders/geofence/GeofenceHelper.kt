@@ -10,6 +10,7 @@ import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.maps.model.LatLng
 import com.udacity.project4.R
+import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 
 class GeofenceHelper(base: Context?) :
     ContextWrapper(base) {

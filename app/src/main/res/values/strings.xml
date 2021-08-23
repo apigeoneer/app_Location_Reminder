@@ -45,4 +45,7 @@
     <string name="reminder_details">Reminder Details</string>
     <string name="add_reminder_fab">Add reminder fab</string>
     <string name="save_reminder_fab">Save reminder fab</string>
+    <string name="permissioin_title" />
+    <string name="background_permission_explanation" />
+    <string name="background_permission_denied_explanation" />
 </resources>
