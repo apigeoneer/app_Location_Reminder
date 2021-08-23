@@ -14,7 +14,6 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.*
 import org.junit.runner.RunWith
-import com.udacity.project4.locationreminders.MainCoroutineRule
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 
 
@@ -25,10 +24,10 @@ import kotlinx.coroutines.test.TestCoroutineDispatcher
 class RemindersLocalRepositoryTest {
 
     @get:Rule
-    var mainCoroutineRule=MainCoroutineRule()
+    var instantExecutorRule=InstantTaskExecutorRule()
 
     @get:Rule
-    var instantExecutorRule=InstantTaskExecutorRule()
+    var mainCoroutineRule=MainCoroutineRule()
 
     private lateinit var database: RemindersDatabase
     private lateinit var dao: RemindersDao
