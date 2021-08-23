@@ -29,25 +29,13 @@ class RemindersLocalRepositoryTest {
     @get:Rule
     var mainCoroutineRule=MainCoroutineRule()
 
-    private lateinit var database: RemindersDatabase
-    private lateinit var dao: RemindersDao
+    private lateinit var dao: FakeRemindersDao
     private lateinit var repository: RemindersLocalRepository
 
     @Before
     fun setup() {
-        database = Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(),
-            RemindersDatabase::class.java
-        ).allowMainThreadQueries()
-            .build()
-
-        dao = database.reminderDao()
-        repository = RemindersLocalRepository(database.reminderDao(), Dispatchers.Main)
-    }
-
-    @After
-    fun teardown() {
-        database.close()
+        dao = FakeRemindersDao()
+        repository = RemindersLocalRepository(dao, Dispatchers.Unconfined)
     }
 
     @Test
