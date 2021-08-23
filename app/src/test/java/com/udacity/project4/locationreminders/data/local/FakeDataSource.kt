@@ -13,6 +13,10 @@ class FakeDataSource(var reminders: MutableList<ReminderDTO>?) : ReminderDataSou
 
     private var shouldReturnError = false
 
+    fun setReturnError(value: Boolean) {
+        shouldReturnError = value
+    }
+
     override suspend fun saveReminder(reminder: ReminderDTO) {
         reminders?.add(reminder)
     }

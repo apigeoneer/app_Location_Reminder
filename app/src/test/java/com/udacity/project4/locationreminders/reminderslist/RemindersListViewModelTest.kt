@@ -1,26 +1,21 @@
 package com.udacity.project4.locationreminders.reminderslist
 
-import android.os.Looper
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.ibm.icu.impl.Assert.fail
+import com.udacity.project4.locationreminders.MainCoroutineRule
 import com.udacity.project4.locationreminders.data.local.FakeDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.getOrAwaitValue
-import com.udacity.project4.locationreminders.util.MainCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.hamcrest.core.IsNot.not
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.context.stopKoin
-import org.robolectric.Shadows.shadowOf
-import org.robolectric.annotation.LooperMode
 
 
 @RunWith(AndroidJUnit4::class)
@@ -107,6 +102,9 @@ class RemindersListViewModelTest {
     fun loadReminders_returnsErrorForNullRemindersList() {
         // Given a fresh view model & a data source containing null
         dataSource=FakeDataSource(null)
+
+        dataSource.setReturnError(true)
+
         remindersListViewModel=
             RemindersListViewModel(ApplicationProvider.getApplicationContext(), dataSource)
 
@@ -114,7 +112,7 @@ class RemindersListViewModelTest {
         remindersListViewModel.loadReminders()
 
         // Then a snack bar with the message "No reminders found" is shown
-        assertThat(remindersListViewModel.showSnackBar.getOrAwaitValue(), `is`("Reminders not found"))
+        assertThat(remindersListViewModel.showSnackBar.getOrAwaitValue(), `is`("Error getting Reminders"))
     }
 
 
