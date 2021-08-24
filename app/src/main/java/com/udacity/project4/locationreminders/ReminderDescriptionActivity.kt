@@ -37,11 +37,11 @@ class ReminderDescriptionActivity : AppCompatActivity() {
         binding.reminderDataItem = intent.getParcelableExtra<ReminderDataItem>(EXTRA_ReminderDataItem)
 
         binding.apply {
-            titleTv.text = reminderDataItem.title
-            descTv.text = reminderDataItem.description
-            locationTv.text = reminderDataItem.location
-            latitudeTv.text = reminderDataItem.latitude.toString()
-            longitudeTv.text = reminderDataItem.longitude.toString()
+            titleTv.text = reminderDataItem?.title
+            descTv.text = reminderDataItem?.description
+            locationTv.text = reminderDataItem?.location
+            latitudeTv.text = reminderDataItem?.latitude.toString()
+            longitudeTv.text = reminderDataItem?.longitude.toString()
         }
 
     }
