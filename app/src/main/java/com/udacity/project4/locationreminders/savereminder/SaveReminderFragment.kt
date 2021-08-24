@@ -169,7 +169,7 @@ class SaveReminderFragment : BaseFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_LOCATION_SETTING) {
+        if (requestCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
             checkDeviceLocationSettingsAndStartGeofence(false)
         }
     }
@@ -198,22 +198,19 @@ class SaveReminderFragment : BaseFragment() {
      *      the required permissions have been granted and the device location is on.
      */
 
-//    @TargetApi(29)
 //    private fun foregroundPermissionGranted(): Boolean {
 //        Log.d(TAG, "::::::: foreground Background Permission Granted :::::::")
 //        val isForegroundPermissionGranted = PackageManager.PERMISSION_GRANTED ==
 //                ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-//        val isBackgroundPermissionGranted = if (runningQOrLater) {
-//            PackageManager.PERMISSION_GRANTED ==
-//                    ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-//        } else {
-//            return true
-//        }
-//
-//        return isForegroundPermissionGranted && isBackgroundPermissionGranted
+////        val isBackgroundPermissionGranted = if (runningQOrLater) {
+////            PackageManager.PERMISSION_GRANTED ==
+////                    ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+////        } else {
+////            return true
+////        }
+//        return isForegroundPermissionGranted
 //    }
-//
-//    @TargetApi(29)
+
 //    private fun requestForegroundLocationPermissions() {
 //        Log.d(TAG, "::::::: request Foreground Background Location Permissions :::::::")
 //        if (foregroundPermissionGranted())
@@ -221,13 +218,15 @@ class SaveReminderFragment : BaseFragment() {
 //
 //        var permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
 //
-//        val resultCode = when {
-//                runningQOrLater -> {
-//                    permissions += Manifest.permission.ACCESS_BACKGROUND_LOCATION
-//                    REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE
-//                }
-//                else -> REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE
-//            }
+////        val resultCode = when {
+////                runningQOrLater -> {
+////                    permissions += Manifest.permission.ACCESS_BACKGROUND_LOCATION
+////                    REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE
+////                }
+////                else -> REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE
+////            }
+//
+//        val resultCode = REQUEST_FOREGROUND_PERMISSION_RESULT_CODE
 //
 //        requestPermissions(permissions, resultCode)
 //    }
@@ -340,7 +339,7 @@ class SaveReminderFragment : BaseFragment() {
 //                    exception.startResolutionForResult(requireActivity(),
 //                        REQUEST_TURN_DEVICE_LOCATION_ON)
                     // for fragment
-                    startIntentSenderForResult(exception.resolution.intentSender, REQUEST_CODE_LOCATION_SETTING,
+                    startIntentSenderForResult(exception.resolution.intentSender, REQUEST_TURN_DEVICE_LOCATION_ON,
                         null, 0, 0, 0, null)
                 } catch (sendEx: IntentSender.SendIntentException) {
                     Log.d(TAG,"Error getting location settings resolution: " + sendEx.message)
@@ -358,14 +357,10 @@ class SaveReminderFragment : BaseFragment() {
             if ( it.isSuccessful ) {
                 Log.d(TAG, "::::::: checkDeviceLocationSettingsAndStartGeofence: location permission granted :::::::")
                 // add a geofence request
-//                if (_viewModel.validateEnteredData(reminderData)) {
-//                    createAndAddAGeofence()
-//                }
-//                _viewModel.validateAndSaveReminder(reminderData)
-//                if (foregroundBackgroundPermissionGranted()) {
+//                if (foregroundPermissionGranted()) {
 //                    addGeofence(reminderDataItem)
 //                } else {
-//                    requestForegroundBackgroundLocationPermissions()
+//                    requestForegroundLocationPermissions()
 //                }
 
                 addGeofence(reminderDataItem)
@@ -386,6 +381,7 @@ class SaveReminderFragment : BaseFragment() {
         private const val LOCATION_PERMISSION_INDEX = 24
         private const val BACKGROUND_LOCATION_PERMISSION_INDEX = 25
         private const val REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE = 26
+        private const val REQUEST_FOREGROUND_PERMISSION_RESULT_CODE = 27
 
     }
 }
