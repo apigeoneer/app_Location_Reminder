@@ -113,7 +113,7 @@ class RemindersLocalRepositoryTest {
         val loadedReminder = repository.getReminder(reminder.id)
 
         // Then
-        assertThat(loadedReminder, `is`(nullValue()))
+//        assertThat(loadedReminder, `is`(nullValue()))
         loadedReminder as Result.Error
         assertThat(loadedReminder.message, `is`("Reminder not found!"))
     }
@@ -133,11 +133,17 @@ class RemindersLocalRepositoryTest {
         // When
         dao.deleteAllReminders()
 
-        val loadedReminder = repository.getReminders()
-        loadedReminder as Result.Success
+        val loadedReminder1 = repository.getReminder(reminder1.id)
+        val loadedReminder2 = repository.getReminder(reminder2.id)
 
         // Then
-        assertThat(loadedReminder, `is`(nullValue()))
+//        loadedReminder1 as Result.Success
+//        assertThat(loadedReminder, `is`(nullValue()))
+
+        loadedReminder1 as Result.Error
+        loadedReminder2 as Result.Error
+        assertThat(loadedReminder1.message,`is`("Reminder not found!"))
+        assertThat(loadedReminder2.message,`is`("Reminder not found!"))
     }
 
 
