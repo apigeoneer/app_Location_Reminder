@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -15,9 +16,13 @@ import androidx.test.filters.MediumTest
 import com.udacity.project4.R
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
+import com.udacity.project4.locationreminders.data.local.FakeDatasource
 import com.udacity.project4.locationreminders.data.local.LocalDB
 import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
+import com.udacity.project4.util.DataBindingIdlingResource
+import com.udacity.project4.util.monitorFragment
+import com.udacity.project4.utils.EspressoIdlingResource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -38,13 +43,15 @@ import org.koin.test.get
 @ExperimentalCoroutinesApi
 //UI Testing
 @MediumTest
-class ReminderListFragmentTest :
-    AutoCloseKoinTest() {
+class ReminderListFragmentTest {
 
 //    add testing for the error messages.
 
-    private lateinit var datasource: ReminderDataSource
+    private lateinit var datasource: FakeDatasource
     private lateinit var appContext: Application
+    // Idling resource
+    private val dataBindingIdlingResource = DataBindingIdlingResource()
+
 
     @Before
     fun init() {
@@ -55,17 +62,17 @@ class ReminderListFragmentTest :
             viewModel {
                 RemindersListViewModel(
                     appContext,
-                    get() as ReminderDataSource
+                    datasource
                 )
             }
-            single {
-                SaveReminderViewModel(
-                    appContext,
-                    get() as ReminderDataSource
-                )
-            }
-            single { RemindersLocalRepository(get()) as ReminderDataSource}
-            single { LocalDB.createRemindersDao(appContext) }
+//            single {
+//                SaveReminderViewModel(
+//                    appContext,
+//                    get() as ReminderDataSource
+//                )
+//            }
+//            single { RemindersLocalRepository(get()) as ReminderDataSource}
+//            single { LocalDB.createRemindersDao(appContext) }
         }
 
         // Declare a new Koin module
@@ -73,12 +80,29 @@ class ReminderListFragmentTest :
             modules(listOf(myModule))
         }
 
-        // Get our real repository
-        datasource = get()
+//        // Get our real repository
+//        datasource = get()
+//
+//        runBlocking {
+//            datasource.deleteAllReminders()
+//        }
+    }
 
-        runBlocking {
-            datasource.deleteAllReminders()
-        }
+    @After
+    fun tearDown() {
+        stopKoin()
+    }
+
+    @Before
+    fun registerIdlingResource(){
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
+        IdlingRegistry.getInstance().register(dataBindingIdlingResource)
+    }
+
+    @After
+    fun unregisterIdlingResource(){
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
+        IdlingRegistry.getInstance().unregister(dataBindingIdlingResource)
     }
 
 
@@ -88,6 +112,8 @@ class ReminderListFragmentTest :
         val reminder = ReminderDTO("title", "description", "location",
             16.78132279413486, 73.35721723965958)
 
+        datasource = FakeDatasource(mutableListOf(reminder))
+
         runBlocking {
             datasource.saveReminder(reminder)
         }
@@ -95,30 +121,37 @@ class ReminderListFragmentTest :
 //        val bundle = ReminderListFragmentArgs(reminder.id).toBundle()
 
         // When fragment is launched
-        launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
+        val scenario = launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
+        dataBindingIdlingResource.monitorFragment(scenario)
 
         // Then
         onView(withText(reminder.title)).check(matches(isDisplayed()))
         onView(withText(reminder.description)).check(matches(isDisplayed()))
         onView(withText(reminder.location)).check(matches(isDisplayed()))
+        Thread.sleep(2000)
     }
 
     @Test
     fun reminderListFragment_DisplayedInUiWithNoReminders() {
-        // When
-        launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
+        datasource = FakeDatasource(mutableListOf())
 
-        runBlocking {
-            datasource.deleteAllReminders()
-        }
+        // When
+//        runBlocking {
+//            datasource.deleteAllReminders()
+//        }
+
+        val scenario = launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
+        dataBindingIdlingResource.monitorFragment(scenario)
 
         // Then
         onView(withText(R.id.noDataTextView)).check(matches(isDisplayed()))
+        Thread.sleep(2000)
     }
 
     @Test
     fun navigateToAddReminder() {
         val scenario = launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
+        dataBindingIdlingResource.monitorFragment(scenario)
 
         val navController = mock(NavController::class.java)
 
