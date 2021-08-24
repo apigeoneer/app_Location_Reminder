@@ -112,7 +112,7 @@ class SaveReminderFragment : BaseFragment() {
                     } else {
                         Log.d(TAG, "::::::: background permission denied alert :::::::")
                         AlertDialog.Builder(requireActivity())
-                            .setTitle(R.string.permissioin_title)
+                            .setTitle(R.string.permission_title)
                             .setMessage(R.string.background_permission_denied_explanation)
                             .setPositiveButton("OK") { dialogInterface, i ->
                                 requestPermissions(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
@@ -153,18 +153,18 @@ class SaveReminderFragment : BaseFragment() {
             }
         }
 
+//        if (grantResults.isEmpty() || grantResults[LOCATION_PERMISSION_INDEX] == PackageManager.PERMISSION_DENIED ||
+//            (requestCode == REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE &&
+//                    grantResults[BACKGROUND_LOCATION_PERMISSION_INDEX] ==
+//                    PackageManager.PERMISSION_DENIED) ) {
+//            // If user denies permission, provide an explanation for why it is needed
+//            Toast.makeText(requireContext(), R.string.permission_denied_explanation, Toast.LENGTH_LONG).show()
+//        } else {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//                checkDeviceLocationSettingsAndStartGeofence()
+//            }
+//        }
 
-        if (grantResults.isEmpty() || grantResults[LOCATION_PERMISSION_INDEX] == PackageManager.PERMISSION_DENIED ||
-            (requestCode == REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE &&
-                    grantResults[BACKGROUND_LOCATION_PERMISSION_INDEX] ==
-                    PackageManager.PERMISSION_DENIED) ) {
-            // If user denies permission, provide an explanation for why it is needed
-            Toast.makeText(requireContext(), R.string.permission_denied_explanation, Toast.LENGTH_LONG).show()
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                checkDeviceLocationSettingsAndStartGeofence()
-            }
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
