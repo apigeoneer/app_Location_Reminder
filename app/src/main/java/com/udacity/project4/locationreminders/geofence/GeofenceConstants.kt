@@ -5,5 +5,6 @@ object GeofenceConstants {
     const val GEOFENCE_RADIUS_IN_METERS = 200F
     const val GEOFENCE_EXPIRATION_IN_MILLISECONDS = 20L
     const val DEFAULT_ZOOM = 15F
+    const val ACTION_GEOFENCE_EVENT = "ACTION_GEOFENCE_EVENT"
 
 }
