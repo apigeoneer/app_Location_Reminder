@@ -71,37 +71,44 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
 
     private fun sendNotification(triggeringGeofences: List<Geofence>) {
         // Get the request id of the current geofence
-        val requestId = when {
-            triggeringGeofences.isNotEmpty() -> {
-                triggeringGeofences[0].requestId
-            }
-            else -> {
-                Log.e(TAG, "No triggering geofences found")
-                return
-            }
-        }
+//        val requestId = when {
+//            triggeringGeofences.isNotEmpty() -> {
+//                triggeringGeofences[0].requestId
+//            }
+//            else -> {
+//                Log.e(TAG, "No triggering geofences found")
+//                return
+//            }
+//        }
+//
+//        Log.d(TAG, "Triggering geofence: id ${triggeringGeofences[0].requestId}")
 
-        Log.d(TAG, "Triggering geofence: id ${triggeringGeofences[0].requestId}")
+        /**
+         * Since there can be > 1 geofences, we need to use a for loop to loop through all triggering Geofences
+         * instead of just calling triggeringGeofences[0].requestId to get the first one
+         */
 
         //Get the local repository instance
         val remindersLocalRepository: RemindersLocalRepository by inject()
 //        Interaction to the repository has to be through a coroutine scope
         CoroutineScope(coroutineContext).launch(SupervisorJob()) {
-            //get the reminder with the request id
-            val result = remindersLocalRepository.getReminder(requestId)
-            if (result is Result.Success<ReminderDTO>) {
-                val reminderDTO = result.data
-                //send a notification to the user with the reminder details
-                sendNotification(
-                    this@GeofenceTransitionsJobIntentService, ReminderDataItem(
-                        reminderDTO.title,
-                        reminderDTO.description,
-                        reminderDTO.location,
-                        reminderDTO.latitude,
-                        reminderDTO.longitude,
-                        reminderDTO.id
+            for (geofence in triggeringGeofences) {
+                //get the reminder with the request id
+                val result = remindersLocalRepository.getReminder(geofence.requestId)
+                if (result is Result.Success<ReminderDTO>) {
+                    val reminderDTO = result.data
+                    //send a notification to the user with the reminder details
+                    sendNotification(
+                        this@GeofenceTransitionsJobIntentService, ReminderDataItem(
+                            reminderDTO.title,
+                            reminderDTO.description,
+                            reminderDTO.location,
+                            reminderDTO.latitude,
+                            reminderDTO.longitude,
+                            reminderDTO.id
+                        )
                     )
-                )
+                }
             }
         }
     }
