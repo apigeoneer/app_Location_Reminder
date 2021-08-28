@@ -1,12 +1,14 @@
 # Location Based Reminder App 📍🔔
 
-#### Screens 👨‍💻
+
+### Screens 👨‍💻
 
 * 1 - Login via email / Google
 * 2 - Reminders list
 * 3 - Create a reminder
 * 4 - Set a marker / select a POI on map
 * 5 - Reminder detail (from notification)
+
 
 
 ### Highlights ✨
