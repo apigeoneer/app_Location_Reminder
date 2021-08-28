@@ -2,11 +2,11 @@
 
 #### Screens 👨‍💻
 
-* Screem 0 - Login via email / Google
-* Screen 1 - Reminders list
-* Screen 2 - Create a reminder
-* Screen 3 - Set a marker / select a POI on map
-* Screen 5 - Reminder detail (from notification)
+* 1 - Login via email / Google
+* 2 - Reminders list
+* 3 - Create a reminder
+* 4 - Set a marker / select a POI on map
+* 5 - Reminder detail (from notification)
 
 
 ### Highlights ✨
