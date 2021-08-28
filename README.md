@@ -1,4 +1,4 @@
-# Location Based Reminder App 📍 🔔
+# Location Based Reminder App 📍🔔
 
 ### Highlights ✨
 
