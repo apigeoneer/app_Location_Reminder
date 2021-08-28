@@ -1,6 +1,6 @@
 # Location Based Reminder App 📍🔔
 
-#### Screens 
+#### Screens 👨‍💻
 
 * Screem 0 - Login via email / Google
 * Screen 1 - Reminders list
